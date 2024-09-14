@@ -23,6 +23,9 @@ namespace CodeGen.CppSyntax
 
             foreach (var member in Members)
             {
+                if (member is CppUnhandledSyntax)
+                    continue;
+              
                 formated.WriteLine(member.GetHeaderText(depth));
             }
 
@@ -31,7 +34,17 @@ namespace CodeGen.CppSyntax
 
         public override string GetSourceText(int depth)
         {
-            return "";
+            CodeFormatString formated = new CodeFormatString(depth);
+
+            foreach (var member in Members)
+            {
+                if (member is CppUnhandledSyntax)
+                    continue;
+
+                formated.WriteLine(member.GetSourceText(depth));
+            }
+
+            return formated.ToString();
         }
     }
 }

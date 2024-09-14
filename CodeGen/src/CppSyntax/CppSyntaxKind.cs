@@ -31,6 +31,7 @@ namespace CodeGen.CppSyntax
         CompilationUnit = 20,       // Move to beginning
         Parameter = 21,
         TypeParameter = 22,         // template type identifier
+        Block = 23,
 
         Unhandled = 1000
     }

@@ -135,7 +135,14 @@ namespace CodeGen.CppSyntax
 
         public override string GetSourceText(int depth)
         {
-            return "";
+            CodeFormatString formated = new CodeFormatString(depth);
+
+            foreach (var method in Methods)
+            {
+                formated.WriteLine(method.GetSourceText(depth));
+            }
+
+            return formated.ToString();
         }
     }
 }

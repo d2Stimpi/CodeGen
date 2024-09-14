@@ -68,7 +68,30 @@ namespace CodeGen.CppSyntax
 
         public override string GetSourceText(int depth)
         {
-            return "";
+            CodeFormatString formated = new CodeFormatString(depth);
+            formated.Clear();
+            string className = "";
+            string paramListTxt = "";
+            
+            if (Parent is CppClassSyntax)
+                className = (Parent as CppClassSyntax).Identifier;
+            //else TODO: error report
+
+            // Visit parameter list
+            if (HasMember<CppTypeParameterListSyntax>())
+            {
+                paramListTxt = GetFirstMember<CppTypeParameterListSyntax>().GetSourceText(0);
+            }
+
+            formated.WriteLine($"{ReturnType} {className}::{Identifier}({paramListTxt})");
+
+            // Visit block node
+            if (HasMember<CppBlockSyntax>())
+            {
+                formated.WriteLine(GetFirstMember<CppBlockSyntax>().GetSourceText(depth));
+            }
+
+            return formated.ToString();
         }
     }
 }

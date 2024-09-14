@@ -9,8 +9,10 @@ namespace CodeGen.CppSyntax
     internal abstract class CppSyntaxNode
     {
         private List<CppSyntaxNode> _leafNodes = new List<CppSyntaxNode>();
+        private CppSyntaxNode _parentNode;
         private CppSyntaxKind _kind;
 
+        public CppSyntaxNode Parent { get => _parentNode; set => _parentNode = value; }
         public List<CppSyntaxNode> Members { get => _leafNodes; }
         public CppSyntaxNode FirstMember { get => _leafNodes.First(); }
         public CppSyntaxKind Kind { get => _kind; }
@@ -18,6 +20,11 @@ namespace CodeGen.CppSyntax
         public CppSyntaxNode(CppSyntaxKind kind)
         {
             _kind = kind;
+        }
+
+        public bool IsKind(CppSyntaxKind kind)
+        {
+            return Kind == kind;
         }
 
         public void AddNode(CppSyntaxNode node)

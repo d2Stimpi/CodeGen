@@ -26,6 +26,11 @@ namespace CodeGen
             _formatedText = _tabs;
         }
 
+        public void Clear()
+        {
+            _formatedText = "";
+        }
+
         public void AddTabs(int tabCount)
         {
             SetTabs(_tabCount + tabCount);

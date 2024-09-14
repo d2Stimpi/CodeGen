@@ -20,6 +20,7 @@ namespace CodeGen
         private List<SyntaxKind> _skipSyntaxKinds = new List<SyntaxKind>()
         {
             SyntaxKind.UsingDirective,
+            SyntaxKind.QualifiedName,
             SyntaxKind.PropertyDeclaration,
         };
 
@@ -35,9 +36,26 @@ namespace CodeGen
         private CppSyntaxNode StackReplace(CppSyntaxNode node)
         {
             _nodeStack.Pop();
+            if (_nodeStack.Count != 0)
+                node.Parent = _nodeStack.Peek();
             _nodeStack.Push(node);
 
             return node;
+        }
+
+        private CppSyntaxNode FindParentOfType(CppSyntaxKind kind)
+        {
+            CppSyntaxNode parent = _nodeStack.Peek();
+            while (parent != null)
+            {
+                if (parent != null)
+                {
+                    if (parent.IsKind(kind))
+                        return parent;
+                }
+                parent = parent.Parent;
+            }
+            return null;
         }
 
         public override void Visit(SyntaxNode node)
@@ -46,8 +64,11 @@ namespace CodeGen
             var kind = _skipSyntaxKinds.Where(x => node.IsKind(x)).FirstOrDefault();
             if (kind == SyntaxKind.None)
             {
-
-                _nodeStack.Push(new CppUnhandledSyntax(node.Kind()));
+                CppUnhandledSyntax cppNode = new CppUnhandledSyntax(node.Kind());
+                // grab a parent node if stack not empty
+                if (_nodeStack.Count != 0)
+                    cppNode.Parent = _nodeStack.Peek();
+                _nodeStack.Push(cppNode);
 
                 base.Visit(node);
 
@@ -70,16 +91,19 @@ namespace CodeGen
 
         public override void VisitIdentifierName(IdentifierNameSyntax node)
         {
-            CppIdentifierSyntax identifierSyntax = StackReplace(new CppIdentifierSyntax()) as CppIdentifierSyntax;
-            identifierSyntax.Identifier = node.Identifier.ToString();
+            var kind = _skipSyntaxKinds.Where(x => node.Parent.IsKind(x)).FirstOrDefault();
+            if (kind == SyntaxKind.None)
+            {
+                CppIdentifierSyntax identifierSyntax = StackReplace(new CppIdentifierSyntax()) as CppIdentifierSyntax;
+                identifierSyntax.Identifier = node.Identifier.ToString();
+            }
 
             base.VisitIdentifierName(node);
         }
 
         public override void VisitNamespaceDeclaration(NamespaceDeclarationSyntax node)
         {
-            CppNamespaceSyntax namespaceSytnax = StackReplace(new CppNamespaceSyntax()) as CppNamespaceSyntax;
-            namespaceSytnax.Identifier = node.Name.ToString();
+            StackReplace(new CppNamespaceSyntax());
 
             base.VisitNamespaceDeclaration(node);
         }
@@ -225,10 +249,21 @@ namespace CodeGen
         public override void VisitPropertyDeclaration(PropertyDeclarationSyntax node)
         {
             PropertyConverter propertyConverter = new PropertyConverter();
+            var parentClass = FindParentOfType(CppSyntaxKind.ClassDeclaration);
+            propertyConverter.OwnerClass = parentClass as CppClassSyntax;
             propertyConverter.VisitPropertyDeclaration(node);
 
-            _classNode.AddNode(propertyConverter.GetMethod);
-            _classNode.AddNode(propertyConverter.SetMethod);
+            if (propertyConverter.HasGetter)
+                _classNode.AddNode(propertyConverter.GetMethod);
+            if (propertyConverter.HasSetter)
+                _classNode.AddNode(propertyConverter.SetMethod);
+        }
+
+        public override void VisitBlock(BlockSyntax node)
+        {
+            StackReplace(new CppBlockSyntax());
+
+            base.VisitBlock(node);
         }
     }
 }
