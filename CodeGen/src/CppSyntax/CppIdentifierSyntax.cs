@@ -28,7 +28,11 @@ namespace CodeGen.CppSyntax
 
         public override string GetSourceText(int depth)
         {
-            return "";
+            CodeFormatString formated = new CodeFormatString(depth);
+
+            formated.Write(Identifier);
+
+            return formated.ToString();
         }
     }
 }

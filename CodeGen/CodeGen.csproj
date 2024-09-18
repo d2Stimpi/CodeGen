@@ -58,7 +58,11 @@
   <ItemGroup>
     <Compile Include="src\Analysis\CompilationUnitConverter.cs" />
     <Compile Include="src\Analysis\ConverterSyntaxWalker.cs" />
+    <Compile Include="src\CppSyntax\CppArgumentList.cs" />
+    <Compile Include="src\CppSyntax\CppArgumentSyntax.cs" />
     <Compile Include="src\CppSyntax\CppBlockSyntax.cs" />
+    <Compile Include="src\CppSyntax\CppInvocationExpressionSyntax.cs" />
+    <Compile Include="src\CppSyntax\CppSimpleMemberAccessExpressionSyntax.cs" />
     <Compile Include="src\CppSyntax\CppTypeParameterSyntax.cs" />
     <Compile Include="src\Analysis\LoggingSyntaxWalker.cs" />
     <Compile Include="src\CodeGen\CodeBuilder.cs" />

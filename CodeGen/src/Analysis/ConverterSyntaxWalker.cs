@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 using CodeGen.CppSyntax;
+using CodeGen.src.CppSyntax;
 
 namespace CodeGen
 {
@@ -264,6 +265,34 @@ namespace CodeGen
             StackReplace(new CppBlockSyntax());
 
             base.VisitBlock(node);
+        }
+
+        public override void VisitInvocationExpression(InvocationExpressionSyntax node)
+        {
+            StackReplace(new CppInvocationExpressionSyntax());
+
+            base.VisitInvocationExpression(node);
+        }
+
+        public override void VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
+        {
+            StackReplace(new CppSimpleMemberAccessExpressionSyntax());
+
+            base.VisitMemberAccessExpression(node);
+        }
+
+        public override void VisitArgumentList(ArgumentListSyntax node)
+        {
+            StackReplace(new CppArgumentList());
+
+            base.VisitArgumentList(node);
+        }
+
+        public override void VisitArgument(ArgumentSyntax node)
+        {
+            StackReplace(new CppArgumentSyntax());
+
+            base.VisitArgument(node);
         }
     }
 }

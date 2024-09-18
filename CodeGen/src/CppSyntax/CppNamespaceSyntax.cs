@@ -35,14 +35,19 @@ namespace CodeGen.CppSyntax
         public override string GetSourceText(int depth)
         {
             CodeFormatString formated = new CodeFormatString(depth);
-            string identifier = GetFirstMember<CppIdentifierSyntax>().Identifier;
-
-            formated.WriteLine($"namespace {identifier}");
-            formated.WriteLine("{");
 
             foreach (var member in Members)
             {
-                formated.WriteLine(member.GetSourceText(depth + 1));
+                if (member is CppIdentifierSyntax)
+                {
+                    string identifier = (member as CppIdentifierSyntax).Identifier;
+                    formated.WriteLine($"namespace {identifier}");
+                    formated.WriteLine("{");
+                }
+                else
+                {
+                    formated.WriteLine(member.GetSourceText(depth + 1));
+                }
             }
 
             formated.WriteLine("}");

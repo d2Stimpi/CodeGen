@@ -31,9 +31,7 @@ namespace CodeGen.CppSyntax
 
         public override string GetSourceText(int depth)
         {
-            CodeFormatString formated = new CodeFormatString(depth);
-
-            return "";
+            return "Error, Template function should be in header!";
         }
     }
 }

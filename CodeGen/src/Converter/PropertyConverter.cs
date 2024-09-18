@@ -57,7 +57,6 @@ namespace CodeGen
                 CppBlockSyntax getBlockSyntax = new CppBlockSyntax();
                 _getMethodSyntax.AddNode(getBlockSyntax);
 
-
                 CppParameterListSyntax paramListSyntax = new CppParameterListSyntax();
 
                 CppParameterSyntax paramSyntax = new CppParameterSyntax();

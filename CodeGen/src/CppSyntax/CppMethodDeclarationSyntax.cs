@@ -72,15 +72,19 @@ namespace CodeGen.CppSyntax
             formated.Clear();
             string className = "";
             string paramListTxt = "";
-            
+
             if (Parent is CppClassSyntax)
                 className = (Parent as CppClassSyntax).Identifier;
             //else TODO: error report
 
-            // Visit parameter list
+            // Don't emit template method definition
             if (HasMember<CppTypeParameterListSyntax>())
+                return $"// Template method: {className}";
+
+            // Visit parameter list
+            if (HasMember<CppParameterListSyntax>())
             {
-                paramListTxt = GetFirstMember<CppTypeParameterListSyntax>().GetSourceText(0);
+                paramListTxt = GetFirstMember<CppParameterListSyntax>().GetSourceText(0);
             }
 
             formated.WriteLine($"{ReturnType} {className}::{Identifier}({paramListTxt})");
@@ -88,7 +92,7 @@ namespace CodeGen.CppSyntax
             // Visit block node
             if (HasMember<CppBlockSyntax>())
             {
-                formated.WriteLine(GetFirstMember<CppBlockSyntax>().GetSourceText(depth));
+                formated.Write(GetFirstMember<CppBlockSyntax>().GetSourceText(depth));
             }
 
             return formated.ToString();

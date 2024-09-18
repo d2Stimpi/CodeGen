@@ -1,5 +1,4 @@
-﻿using CodeGen.CppSyntax;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace CodeGen.CppSyntax
 {
-    internal sealed class CppBlockSyntax : CppSyntaxNode
+    internal sealed class CppArgumentList : CppSyntaxNode
     {
-        public CppBlockSyntax() : base(CppSyntaxKind.Block)
+        public CppArgumentList() : base(CppSyntaxKind.ArgumentList)
         {
 
         }
@@ -22,17 +21,16 @@ namespace CodeGen.CppSyntax
         public override string GetSourceText(int depth)
         {
             CodeFormatString formated = new CodeFormatString(depth);
-            formated.Clear();
+            int initialLength = formated.ToString().Length;
 
-            formated.SetTabs(depth + 1);
-            formated.WriteLine("{");
-            foreach (var expr in Members)
+            foreach (var arg in Members)
             {
-                formated.WriteLine(expr.GetSourceText(depth + 1));
+                if (formated.ToString().Length == initialLength)
+                    formated.Write(arg.GetSourceText(0));
+                else
+                    formated.Write(", " + arg.GetSourceText(0));
             }
-            formated.SetTabs(depth);
-            formated.WriteLine("}");
-            
+
             return formated.ToString();
         }
     }

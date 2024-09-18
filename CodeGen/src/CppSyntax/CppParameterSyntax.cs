@@ -19,6 +19,7 @@ namespace CodeGen.CppSyntax
 
         public override string GetHeaderText(int depth)
         {
+            // TODO: handle default parameter values
             string txt = "";
 
             if (Members.OfType<CppPredefineType>().Any())
@@ -33,7 +34,16 @@ namespace CodeGen.CppSyntax
 
         public override string GetSourceText(int depth)
         {
-            return "";
+            string txt = "";
+
+            if (Members.OfType<CppPredefineType>().Any())
+                txt += FirstMember.GetSourceText(depth) + " ";
+            else if (Members.OfType<CppIdentifierSyntax>().Any())
+                txt += FirstMember.GetSourceText(depth) + " ";
+
+            txt += Identifier;
+
+            return txt;
         }
     }
 }

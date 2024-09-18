@@ -39,8 +39,16 @@ namespace CodeGen
 
         public void SetTabs(int tabCount)
         {
+            _tabs = String.Concat(Enumerable.Repeat("\t", tabCount));
+
+            // remove extra tabs on current formated text
+            if (_tabCount > tabCount)
+            {
+                _formatedText = _formatedText.TrimEnd('\t');
+                _formatedText += _tabs;
+            }
+
             _tabCount = tabCount;
-            _tabs = String.Concat(Enumerable.Repeat("\t", _tabCount));
         }
 
         public void Write(string text)

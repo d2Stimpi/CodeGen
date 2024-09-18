@@ -32,6 +32,10 @@ namespace CodeGen.CppSyntax
         Parameter = 21,
         TypeParameter = 22,         // template type identifier
         Block = 23,
+        InvocationExpression = 24,
+        SimpleMemberAccessExpression = 25,
+        ArgumentList = 26,
+        Argument = 27,
 
         Unhandled = 1000
     }
