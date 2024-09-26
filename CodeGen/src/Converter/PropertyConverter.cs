@@ -59,12 +59,10 @@ namespace CodeGen
 
                 CppParameterListSyntax paramListSyntax = new CppParameterListSyntax();
 
-                CppParameterSyntax paramSyntax = new CppParameterSyntax();
-                paramSyntax.Identifier = "value";
+                CppParameterSyntax paramSyntax = new CppParameterSyntax() { Identifier = "value" };
                 paramListSyntax.AddNode(paramSyntax);
 
-                CppPredefineType predefType = new CppPredefineType();
-                predefType.TypeName = node.Keyword.ToString();
+                CppPredefineType predefType = new CppPredefineType() { TypeName = node.Keyword.ToString() };
                 paramSyntax.AddNode(predefType);
 
                 CppBlockSyntax setBlockSyntax = new CppBlockSyntax();
@@ -86,12 +84,10 @@ namespace CodeGen
 
                 CppParameterListSyntax paramListSyntax = new CppParameterListSyntax();
 
-                CppParameterSyntax paramSyntax = new CppParameterSyntax();
-                paramSyntax.Identifier = "value";
+                CppParameterSyntax paramSyntax = new CppParameterSyntax() { Identifier = "value"};
                 paramListSyntax.AddNode(paramSyntax);
 
-                CppPredefineType predefType = new CppPredefineType();
-                predefType.TypeName = node.Identifier.ToString();
+                CppPredefineType predefType = new CppPredefineType() { TypeName = node.Identifier.ToString() };
                 paramSyntax.AddNode(predefType);
 
                 CppBlockSyntax setBlockSyntax = new CppBlockSyntax();

@@ -36,6 +36,11 @@ namespace CodeGen.CppSyntax
         SimpleMemberAccessExpression = 25,
         ArgumentList = 26,
         Argument = 27,
+        LocalDeclarationStatement = 28,
+        ObjectCreationExpression = 29,
+        ObjectInitializerExpression = 30,
+        SimpleAssignmentExpression = 31,
+        ThisExpression = 32,
 
         Unhandled = 1000
     }

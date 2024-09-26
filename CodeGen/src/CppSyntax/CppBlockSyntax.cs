@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace CodeGen.CppSyntax
 {
+    /*
+     *  Should contain list of Statement type nodes (TODO: check/verify)
+     *  - TODO: only after non logical statement string generation append ";"
+     */
     internal sealed class CppBlockSyntax : CppSyntaxNode
     {
         public CppBlockSyntax() : base(CppSyntaxKind.Block)
@@ -26,9 +30,13 @@ namespace CodeGen.CppSyntax
 
             formated.SetTabs(depth + 1);
             formated.WriteLine("{");
-            foreach (var expr in Members)
+            foreach (var statement in Members)
             {
-                formated.WriteLine(expr.GetSourceText(depth + 1));
+                string lineEnding = "";
+                if (!statement.IsKind(CppSyntaxKind.Block))
+                    lineEnding = ";";
+
+                formated.WriteLine(statement.GetSourceText(depth + 1) + lineEnding);
             }
             formated.SetTabs(depth);
             formated.WriteLine("}");

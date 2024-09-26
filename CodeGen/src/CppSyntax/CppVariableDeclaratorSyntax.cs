@@ -19,12 +19,22 @@ namespace CodeGen.CppSyntax
 
         public override string GetHeaderText(int depth)
         {
-            return Identifier;
+            string declaratorTxt = Identifier;
+
+            if (HasMembers)
+                declaratorTxt += " " + FirstMember.GetSourceText(0);
+
+            return declaratorTxt;
         }
 
         public override string GetSourceText(int depth)
         {
-            return "";
+            string declaratorTxt = Identifier;
+
+            if (HasMembers)
+                declaratorTxt += " " + FirstMember.GetSourceText(0);
+
+            return declaratorTxt;
         }
     }
 }

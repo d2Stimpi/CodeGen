@@ -174,16 +174,46 @@ namespace CodeGen
             switch (node.Kind())
             {
                 case SyntaxKind.NumericLiteralExpression:
-                    StackReplace(new CppNumericLiteralSyntax());
+                    StackReplace(new CppNumericLiteralSyntax() { NumericLiteral = node.Token.ToString() });
                     break;
                 case SyntaxKind.StringLiteralExpression:
-                    StackReplace(new CppStringLiteralSyntax());
+                    CppStringLiteralSyntax stringLiteralSyntax = StackReplace(new CppStringLiteralSyntax()) as CppStringLiteralSyntax;
+                    stringLiteralSyntax.Token = node.Token.ToString();
                     break;
                 default:
                     break;
             }
 
             base.VisitLiteralExpression(node);
+        }
+
+        public override void VisitInterpolatedStringExpression(InterpolatedStringExpressionSyntax node)
+        {
+            InterpolatedStringConversion interpolatedStringConversion = new InterpolatedStringConversion(node);
+
+            var parent = FindParentOfType(CppSyntaxKind.Block);
+            if (parent != null)
+            {
+                CppBlockSyntax ownerMethodBlock = parent as CppBlockSyntax;
+                var statements = interpolatedStringConversion.Statements;
+                statements.ForEach(e => ownerMethodBlock.AddNode(e));
+                //Console.WriteLine($"Method {ownerMethod.Identifier} has interpolatedStringExpression");
+
+                // Test
+                /*CppIdentifierSyntax lhsIdentifier = new CppIdentifierSyntax() { Identifier = "lhsVar" };
+                CppIdentifierSyntax rhsIdentifier = new CppIdentifierSyntax() { Identifier = "42" };
+
+                CppSimpleAssignmentExpressionSyntax assignmentExpressionSyntax = new CppSimpleAssignmentExpressionSyntax();
+                assignmentExpressionSyntax.AddNode(lhsIdentifier);
+                assignmentExpressionSyntax.AddNode(rhsIdentifier);*/
+
+                // Add expression to current code block
+                /*ownerMethodBlock.AddNode(assignmentExpressionSyntax);*/
+
+                Console.WriteLine(ownerMethodBlock.GetSourceText(0));
+            }
+
+            base.VisitInterpolatedStringExpression(node);
         }
 
         public override void VisitMethodDeclaration(MethodDeclarationSyntax node)
@@ -293,6 +323,13 @@ namespace CodeGen
             StackReplace(new CppArgumentSyntax());
 
             base.VisitArgument(node);
+        }
+
+        public override void VisitLocalDeclarationStatement(LocalDeclarationStatementSyntax node)
+        {
+            StackReplace(new CppLocalDeclarationStatementSyntax());
+
+            base.VisitLocalDeclarationStatement(node);
         }
     }
 }

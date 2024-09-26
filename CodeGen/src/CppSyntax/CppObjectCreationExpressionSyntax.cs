@@ -6,25 +6,23 @@ using System.Threading.Tasks;
 
 namespace CodeGen.CppSyntax
 {
-    class CppNumericLiteralSyntax : CppSyntaxNode
+    internal sealed class CppObjectCreationExpressionSyntax : CppSyntaxNode
     {
-        private string _literal = "";
-
-        public string NumericLiteral { get => _literal; set => _literal = value; }
-
-        public CppNumericLiteralSyntax() : base(CppSyntaxKind.NumericLiteral)
+        public CppObjectCreationExpressionSyntax() : base(CppSyntaxKind.ObjectCreationExpression)
         {
 
         }
 
         public override string GetHeaderText(int depth)
         {
-            return NumericLiteral;
+            return "";
         }
 
         public override string GetSourceText(int depth)
         {
-            return NumericLiteral;
+            CodeFormatString formated = new CodeFormatString(depth);
+
+            return formated.ToString();
         }
     }
 }

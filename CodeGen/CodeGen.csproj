@@ -58,11 +58,20 @@
   <ItemGroup>
     <Compile Include="src\Analysis\CompilationUnitConverter.cs" />
     <Compile Include="src\Analysis\ConverterSyntaxWalker.cs" />
+    <Compile Include="src\Analysis\StackSyntaxWalker.cs" />
+    <Compile Include="src\Converter\ConsoleConversion.cs" />
+    <Compile Include="src\Converter\InterpolatedStringConversion.cs" />
+    <Compile Include="src\Converter\StandardLibConversion.cs" />
     <Compile Include="src\CppSyntax\CppArgumentList.cs" />
     <Compile Include="src\CppSyntax\CppArgumentSyntax.cs" />
     <Compile Include="src\CppSyntax\CppBlockSyntax.cs" />
     <Compile Include="src\CppSyntax\CppInvocationExpressionSyntax.cs" />
+    <Compile Include="src\CppSyntax\CppLocalDeclarationStatementSyntax.cs" />
+    <Compile Include="src\CppSyntax\CppObjectCreationExpressionSyntax.cs" />
+    <Compile Include="src\CppSyntax\CppObjectInitializerExpressionSyntax.cs" />
+    <Compile Include="src\CppSyntax\CppSimpleAssignmentExpressionSyntax.cs" />
     <Compile Include="src\CppSyntax\CppSimpleMemberAccessExpressionSyntax.cs" />
+    <Compile Include="src\CppSyntax\CppThisExpressionSyntax.cs" />
     <Compile Include="src\CppSyntax\CppTypeParameterSyntax.cs" />
     <Compile Include="src\Analysis\LoggingSyntaxWalker.cs" />
     <Compile Include="src\CodeGen\CodeBuilder.cs" />

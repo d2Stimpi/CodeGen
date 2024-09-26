@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CodeGen.CppSyntax;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,13 +7,9 @@ using System.Threading.Tasks;
 
 namespace CodeGen.CppSyntax
 {
-    class CppStringLiteralSyntax : CppSyntaxNode
+    internal class CppObjectInitializerExpressionSyntax : CppSyntaxNode
     {
-        private string _strLiteral;
-
-        public string Token { get => _strLiteral; set => _strLiteral = value; }
-
-        public CppStringLiteralSyntax() : base(CppSyntaxKind.StringLiteral)
+        public CppObjectInitializerExpressionSyntax() : base(CppSyntaxKind.ObjectInitializerExpression)
         {
 
         }
@@ -24,7 +21,9 @@ namespace CodeGen.CppSyntax
 
         public override string GetSourceText(int depth)
         {
-            return Token;
+            CodeFormatString formated = new CodeFormatString(depth);
+
+            return formated.ToString();
         }
     }
 }

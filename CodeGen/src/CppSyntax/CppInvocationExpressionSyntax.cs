@@ -8,11 +8,25 @@ namespace CodeGen.CppSyntax
 {
     internal sealed class CppInvocationExpressionSyntax : CppSyntaxNode
     {
-        public CppArgumentList Arguments { get => GetFirstMember<CppArgumentList>(); }
+        public CppArgumentList ArgumentList { get => GetFirstMember<CppArgumentList>(); }
+        
+        public string ExpressionIdentifier { get => GetExpressionIdentifier(); }
 
         public CppInvocationExpressionSyntax() : base(CppSyntaxKind.InvocationExpression)
         {
 
+        }
+
+        public string GetExpressionIdentifier()
+        {
+            if (FirstMember is CppIdentifierSyntax)
+            {
+                return (FirstMember as CppIdentifierSyntax).Identifier;
+            }
+            else
+            {
+                return (FirstMember.FirstMember as CppIdentifierSyntax).Identifier;
+            }
         }
 
         public override string GetHeaderText(int depth)
@@ -24,14 +38,21 @@ namespace CodeGen.CppSyntax
         {
             CodeFormatString formated = new CodeFormatString(depth);
 
-            string exprTxt = FirstMember.GetSourceText(0);
-            string argsTxt = "";
+            if (StandardLibConversion.IsConvertable(ExpressionIdentifier))
+            {
+                formated.Write(StandardLibConversion.ConvertInvocationExpression(ExpressionIdentifier, ArgumentList));
+            }
+            else
+            {
+                string exprTxt = FirstMember.GetSourceText(0);
+                string argsTxt = "";
 
-            if (Arguments != null)
-                argsTxt = Arguments.GetSourceText(0);
+                if (ArgumentList != null)
+                    argsTxt = ArgumentList.GetSourceText(0);
 
-            // {expression}({argument list})
-            formated.Write($"{exprTxt}({argsTxt});");
+                // {expression}({argument list})
+                formated.Write($"{exprTxt}({argsTxt})");
+            }
 
             return formated.ToString();
         }

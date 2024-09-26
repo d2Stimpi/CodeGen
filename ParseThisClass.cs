@@ -20,10 +20,12 @@ namespace Stimpi
         public void MethodOne()
         {
             Console.WriteLine("Some printed text");
-            Console.WriteLine($"Result of MethodTwo() = {MethodTwo(10, MethodTwo(3, 3))}");
+            Console.WriteLine($"Result of MethodTwo() = {MethodTwo(10, MethodTwo(3, 3))} bla {MethodThree(1, 2)}");
             {
                 Console.WriteLine("Text in a block");
             }
+            string someTest = "String assignment";
+            Console.WriteLine(someTest);
         }
 
         private static int MethodTwo(int arg1, int arg2)

@@ -15,12 +15,12 @@ namespace CodeGen.CppSyntax
 
         public override string GetHeaderText(int depth)
         {
-            return "";
+            return " = " + FirstMember.GetHeaderText(0);
         }
 
         public override string GetSourceText(int depth)
         {
-            return "";
+            return " = " + FirstMember.GetSourceText(0);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace CodeGen
     {
         static void Main(string[] args)
         {
-            string rootDir = "D:\\compilers\\wasm_test\\roslyn\\CodeGen";
+            string rootDir = "D:\\stimpi_git\\new_repo\\CodeGen";
 
             Parser parser = new Parser();
             CppRootSyntaxNode cppTree = parser.ParseFile(Path.Combine(rootDir, "ParseThisClass.cs"));

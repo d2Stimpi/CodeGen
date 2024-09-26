@@ -23,6 +23,8 @@ namespace CodeGen.src.CppSyntax
         {
             CodeFormatString formated = new CodeFormatString(depth);
 
+            formated.Write(FirstMember.GetSourceText(0));
+
             return formated.ToString();
         }
     }

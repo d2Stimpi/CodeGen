@@ -8,6 +8,12 @@ namespace CodeGen.CppSyntax
 {
     internal sealed class CppSimpleMemberAccessExpressionSyntax : CppSyntaxNode
     {
+        private string _className;
+        private string _memberName;
+
+        public string ClassIdentifier { get => _className; set => _className = value; }
+        public string MemberIdentifier { get => _memberName; set => _memberName = value; }
+
         public CppSimpleMemberAccessExpressionSyntax() : base(CppSyntaxKind.SimpleMemberAccessExpression)
         {
 
@@ -30,7 +36,7 @@ namespace CodeGen.CppSyntax
                     memberAccessTxt += "." + identifier.GetSourceText(0);
             }
 
-            return "";
+            return memberAccessTxt;
         }
     }
 }
