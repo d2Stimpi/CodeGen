@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CodeGen.Converter;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,17 +9,39 @@ namespace CodeGen.CppSyntax
 {
     internal class ConsoleConversion : MethodConversionBase
     {
-        public override string Convert(CppArgumentList argumentList)
+        public override CppSyntaxNode Convert(CppSyntaxNode syntaxNode)
         {
-            string convertedTxt = "std::cout";
+            CppIdentifierSyntax className = syntaxNode.FirstMember.GetFirstMember() as CppIdentifierSyntax;
+            CppIdentifierSyntax methodName = syntaxNode.FirstMember.GetNextMember() as CppIdentifierSyntax;
 
-            foreach (var arg in argumentList.Members)
+            string writeLineStr = methodName.Identifier == "WriteLine" ? " << std::endl" : "";
+
+            CppArgumentList args = syntaxNode.GetFirstMember<CppArgumentList>();
+            CppSyntaxNode argNode = args.FirstMember.FirstMember;
+            string strLiteral = "unhandled";
+
+            if (argNode.IsKind(CppSyntaxKind.StringLiteral))
+                strLiteral = (argNode as CppStringLiteralSyntax).Token;
+            else if (argNode.IsKind(CppSyntaxKind.IdentifierName))
+                strLiteral = (argNode as CppIdentifierSyntax).Identifier;
+
+            // Create new node that represends std::cout << strliteral
+            CppOperatorExpressionSyntax expression = new CppOperatorExpressionSyntax()
             {
-                convertedTxt += " << " + arg.GetSourceText(0);
-            }
-            convertedTxt += " << std::endl";
+                NewMembers =
+                {
+                    new CppIdentifierSyntax() { Identifier = "std::cout" },
+                    new CppInsertionOperatorSyntax()
+                    {
+                        NewMember = new CppStringLiteralSyntax()
+                        {
+                            Token = strLiteral + writeLineStr
+                        }
+                    }
+                }
+            };
 
-            return convertedTxt;
+            return expression;
         }
     }
 }

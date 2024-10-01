@@ -197,21 +197,12 @@ namespace CodeGen
                 CppBlockSyntax ownerMethodBlock = parent as CppBlockSyntax;
                 var statements = interpolatedStringConversion.Statements;
                 statements.ForEach(e => ownerMethodBlock.AddNode(e));
-                //Console.WriteLine($"Method {ownerMethod.Identifier} has interpolatedStringExpression");
-
-                // Test
-                /*CppIdentifierSyntax lhsIdentifier = new CppIdentifierSyntax() { Identifier = "lhsVar" };
-                CppIdentifierSyntax rhsIdentifier = new CppIdentifierSyntax() { Identifier = "42" };
-
-                CppSimpleAssignmentExpressionSyntax assignmentExpressionSyntax = new CppSimpleAssignmentExpressionSyntax();
-                assignmentExpressionSyntax.AddNode(lhsIdentifier);
-                assignmentExpressionSyntax.AddNode(rhsIdentifier);*/
-
-                // Add expression to current code block
-                /*ownerMethodBlock.AddNode(assignmentExpressionSyntax);*/
 
                 Console.WriteLine(ownerMethodBlock.GetSourceText(0));
             }
+
+            string tokenStr = interpolatedStringConversion.VarName + ".str()";
+            StackReplace(new CppStringLiteralSyntax() { Token = tokenStr });
 
             base.VisitInterpolatedStringExpression(node);
         }
@@ -265,12 +256,23 @@ namespace CodeGen
 
         public override void VisitBinaryExpression(BinaryExpressionSyntax node)
         {
+            CppBinaryExpressionSyntax binaryExpressionSyntax = StackReplace(new CppBinaryExpressionSyntax()) as CppBinaryExpressionSyntax;
             switch (node.Kind())
             {
                 case SyntaxKind.AddExpression:
-                    StackReplace(new CppAddExpressionSyntax());
+                    binaryExpressionSyntax.OperationKind = BinaryExpressionKind.AddExpression;
+                    break;
+                case SyntaxKind.SubtractExpression:
+                    binaryExpressionSyntax.OperationKind = BinaryExpressionKind.SubtractExpression;
+                    break;
+                case SyntaxKind.MultiplyExpression:
+                    binaryExpressionSyntax.OperationKind = BinaryExpressionKind.MultiplyExpression;
+                    break;
+                case SyntaxKind.DivideExpression:
+                    binaryExpressionSyntax.OperationKind = BinaryExpressionKind.DivideExpression;
                     break;
                 default:
+                    binaryExpressionSyntax.OperationKind = BinaryExpressionKind.UnhandledBinaryExpression;
                     break;
             }
 
@@ -299,9 +301,16 @@ namespace CodeGen
 
         public override void VisitInvocationExpression(InvocationExpressionSyntax node)
         {
-            StackReplace(new CppInvocationExpressionSyntax());
+            CppInvocationExpressionSyntax invocationSyntax = StackReplace(new CppInvocationExpressionSyntax()) as CppInvocationExpressionSyntax;
 
             base.VisitInvocationExpression(node);
+
+            // In place conversion to C++ check
+            CppSyntaxNode covnertedSyntax = StandardLibConversion.InvocationExpressionTryConvert(invocationSyntax);
+            if (covnertedSyntax != null)
+            {
+                StackReplace(covnertedSyntax);
+            }
         }
 
         public override void VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
@@ -330,6 +339,13 @@ namespace CodeGen
             StackReplace(new CppLocalDeclarationStatementSyntax());
 
             base.VisitLocalDeclarationStatement(node);
+        }
+
+        public override void VisitReturnStatement(ReturnStatementSyntax node)
+        {
+            StackReplace(new CppReturnStatementSyntax());
+
+            base.VisitReturnStatement(node);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace CodeGen.CppSyntax
         MethodDeclaration = 15,
         ParameterList = 16,
         TypeParameterList = 17,     // Template type
-        AddExpression = 18,
+        BinaryExpression = 18,
         ExpressionStatement = 19,
         CompilationUnit = 20,       // Move to beginning
         Parameter = 21,
@@ -41,6 +41,9 @@ namespace CodeGen.CppSyntax
         ObjectInitializerExpression = 30,
         SimpleAssignmentExpression = 31,
         ThisExpression = 32,
+        InsertionOperator = 33,
+        OperatorExpression = 34,
+        ReturnStatement = 35,
 
         Unhandled = 1000
     }

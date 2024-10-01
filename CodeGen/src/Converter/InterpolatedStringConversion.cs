@@ -23,71 +23,45 @@ namespace CodeGen.CppSyntax
 
     internal sealed class InterpolatedStringConversion : StackSyntaxWalker
     {
-        private List<string> _stringLiterals = new List<string>();
-        private List<CppInvocationExpressionSyntax> _invocations = new List<CppInvocationExpressionSyntax>();
-        // Final result of statements
+        // std::string variaton of statements created from expressions found in onterpolated string expression
         private List<CppSyntaxNode> _statements = new List<CppSyntaxNode>();
+        private CppSyntaxNode _op;
+        private string _ossVar;
 
-        public List<string> StringLiterals { get => _stringLiterals; }
-        public List<CppInvocationExpressionSyntax> InvocationExpressions { get => _invocations; }
         public List<CppSyntaxNode> Statements { get => _statements; }
-        
+        public string VarName { get => _ossVar; }
 
         public InterpolatedStringConversion(CSharpSyntaxNode node)
         {
-            Visit(node);
-
-            // Create variable declaration
-            string declVarName = "genUniqueVarName";
-            CppLocalDeclarationStatementSyntax declStatement = new CppLocalDeclarationStatementSyntax();
-            declStatement.AddNode(new CppVariableDeclarationSyntax() {
+            // First statement will be oss declaration
+            _ossVar = "oss"; 
+            CppLocalDeclarationStatementSyntax ossDecl = new CppLocalDeclarationStatementSyntax();
+            ossDecl.AddNode(new CppVariableDeclarationSyntax()
+            {
                 NewMembers =
                 {
-                    new CppIdentifierSyntax() { Identifier = "std::string" },
+                    new CppIdentifierSyntax() { Identifier = "std::ostringstream" },
                     new CppVariableDeclaratorSyntax()
                     {
-                        Identifier = declVarName,
-                        NewMember = new CppEqualsValueClauseSyntax()
-                        {
-                            NewMember = new CppStringLiteralSyntax()
-                            {
-                                Token = "\"" + StringLiterals.First() + "\""
-                            }
-                        }
+                        Identifier = _ossVar
                     }
                 }
             });
-            _statements.Add(declStatement);
+            _statements.Add(ossDecl);
 
-            // Append statements
-            foreach (var invocExpr in _invocations)
+            // Expression statement to add to ( << [expression] )
+            CppExpressionStatementSyntax constructStrExprssion = new CppExpressionStatementSyntax();
+            constructStrExprssion.AddNode(new CppOperatorExpressionSyntax()
             {
-                CppExpressionStatementSyntax appendStatement = new CppExpressionStatementSyntax();
-                appendStatement.AddNode(new CppInvocationExpressionSyntax()
+                NewMembers =
                 {
-                    NewMembers =
-                    {
-                        new CppSimpleMemberAccessExpressionSyntax()
-                        {
-                            NewMembers =
-                            {
-                                new CppIdentifierSyntax() { Identifier = declVarName },
-                                new CppIdentifierSyntax() { Identifier = "append" }
-                            }
-                        },
-                        new CppArgumentList()
-                        {
-                            NewMember = new CppArgumentSyntax() { NewMember = invocExpr }
-                        }
-                    }
-                });
-                _statements.Add(appendStatement);
-            }
-        }
+                    new CppIdentifierSyntax() { Identifier = _ossVar }
+                }
+            });
+            _statements.Add(constructStrExprssion);
+            _op = constructStrExprssion.FirstMember;
 
-        public void AddStringLiteral(string str)
-        {
-            _stringLiterals.Add(str);
+            Visit(node);
         }
 
         public override void VisitInterpolation(InterpolationSyntax node)
@@ -99,7 +73,19 @@ namespace CodeGen.CppSyntax
         public override void VisitInterpolatedStringText(InterpolatedStringTextSyntax node)
         {
             Console.WriteLine("InterpolatedStringText:" + node.ToString());
-            AddStringLiteral(node.ToString());
+
+            _op.AddNode(new CppInsertionOperatorSyntax()
+            {
+                NewMember = new CppOperatorExpressionSyntax()
+                {
+                    NewMembers =
+                    {
+                        new CppStringLiteralSyntax() { Token = "\"" + node.ToString() + "\"" }
+                    }
+                }
+            });
+            _op = _op.GetFirstMember<CppInsertionOperatorSyntax>().FirstMember;
+
 
             base.VisitInterpolatedStringText(node);
         }
@@ -109,8 +95,16 @@ namespace CodeGen.CppSyntax
             CppInvocationExpressionSyntax invocation = StackAddNode(new CppInvocationExpressionSyntax()) as CppInvocationExpressionSyntax;
             if (!node.Parent.IsKind(SyntaxKind.Argument))
             {
-                _invocations.Add(invocation);
                 base.VisitInvocationExpression(node);
+
+                _op.AddNode(new CppInsertionOperatorSyntax()
+                {
+                    NewMember = new CppOperatorExpressionSyntax()
+                    {
+                        NewMember = invocation
+                    }
+                });
+                _op = _op.GetFirstMember<CppInsertionOperatorSyntax>().FirstMember;
             }
             else
             {

@@ -1,0 +1,6 @@
+CodeGen/bin/
+CodeGen/obj/
+.vs/
+CppClass.h
+CppClass.cpp
+packages/

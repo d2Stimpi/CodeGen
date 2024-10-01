@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CodeGen.CppSyntax;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,24 +7,21 @@ using System.Threading.Tasks;
 
 namespace CodeGen.CppSyntax
 {
-    class CppAddExpressionSyntax : CppSyntaxNode
+    internal class CppReturnStatementSyntax : CppSyntaxNode
     {
-        public CppAddExpressionSyntax() : base(CppSyntaxKind.AddExpression)
+        public CppReturnStatementSyntax() : base(CppSyntaxKind.ReturnStatement)
         {
+
         }
 
         public override string GetHeaderText(int depth)
         {
-            CodeFormatString formated = new CodeFormatString(depth);
-
             return "";
         }
 
         public override string GetSourceText(int depth)
         {
-            CodeFormatString formated = new CodeFormatString(depth);
-
-            return "";
+            return "return " + FirstMember.GetSourceText(0);
         }
     }
 }
