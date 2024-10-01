@@ -61,6 +61,7 @@
     <Compile Include="src\Analysis\StackSyntaxWalker.cs" />
     <Compile Include="src\Converter\ConsoleConversion.cs" />
     <Compile Include="src\Converter\CppExpressionBuilder.cs" />
+    <Compile Include="src\Converter\PropertyConversion.cs" />
     <Compile Include="src\CppSyntax\CppOperatorExpressionSyntax.cs" />
     <Compile Include="src\Converter\InterpolatedStringConversion.cs" />
     <Compile Include="src\Converter\StandardLibConversion.cs" />
@@ -81,7 +82,6 @@
     <Compile Include="src\CodeGen\CodeBuilder.cs" />
     <Compile Include="src\CodeGen\CodeFormatString.cs" />
     <Compile Include="src\CodeGen\CppFileWriter.cs" />
-    <Compile Include="src\Converter\PropertyConverter.cs" />
     <Compile Include="src\CppSyntax\CppCompilationUnitNode.cs" />
     <Compile Include="src\CppSyntax\CppExpressionStatementSyntax.cs" />
     <Compile Include="src\CppSyntax\CppBinaryExpressionSyntax.cs" />

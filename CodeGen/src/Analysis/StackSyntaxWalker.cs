@@ -37,5 +37,24 @@ namespace CodeGen.Analysis
             }
         }
 
+        public CppSyntaxNode FindParentOfType(CppSyntaxKind kind)
+        {
+            CppSyntaxNode parent = _nodeStack.Peek();
+            while (parent != null)
+            {
+                if (parent != null)
+                {
+                    if (parent.IsKind(kind))
+                        return parent;
+                }
+                parent = parent.Parent;
+            }
+            return null;
+        }
+
+        public bool HasParentOfType(CppSyntaxKind kind)
+        {
+            return FindParentOfType(kind) != null;
+        }
     }
 }

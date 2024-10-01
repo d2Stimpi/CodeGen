@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.CodeAnalysis.CSharp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,6 +25,32 @@ namespace CodeGen.CppSyntax
 
         public CppBinaryExpressionSyntax() : base(CppSyntaxKind.BinaryExpression)
         {
+        }
+
+        public static BinaryExpressionKind BinaryExpressionKindFromSyntaxKind(SyntaxKind kind)
+        {
+            BinaryExpressionKind retVal = BinaryExpressionKind.UnhandledBinaryExpression;
+
+            switch (kind)
+            {
+                case SyntaxKind.AddExpression:
+                    retVal = BinaryExpressionKind.AddExpression;
+                    break;
+                case SyntaxKind.SubtractExpression:
+                    retVal = BinaryExpressionKind.SubtractExpression;
+                    break;
+                case SyntaxKind.MultiplyExpression:
+                    retVal = BinaryExpressionKind.MultiplyExpression;
+                    break;
+                case SyntaxKind.DivideExpression:
+                    retVal = BinaryExpressionKind.DivideExpression;
+                    break;
+                default:
+                    retVal = BinaryExpressionKind.UnhandledBinaryExpression;
+                    break;
+            }
+
+            return retVal;
         }
 
         public override string GetHeaderText(int depth)

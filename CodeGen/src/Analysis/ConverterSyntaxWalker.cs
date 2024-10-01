@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 using CodeGen.CppSyntax;
 using CodeGen.src.CppSyntax;
+using CodeGen.Converter;
 
 namespace CodeGen
 {
@@ -257,39 +258,20 @@ namespace CodeGen
         public override void VisitBinaryExpression(BinaryExpressionSyntax node)
         {
             CppBinaryExpressionSyntax binaryExpressionSyntax = StackReplace(new CppBinaryExpressionSyntax()) as CppBinaryExpressionSyntax;
-            switch (node.Kind())
-            {
-                case SyntaxKind.AddExpression:
-                    binaryExpressionSyntax.OperationKind = BinaryExpressionKind.AddExpression;
-                    break;
-                case SyntaxKind.SubtractExpression:
-                    binaryExpressionSyntax.OperationKind = BinaryExpressionKind.SubtractExpression;
-                    break;
-                case SyntaxKind.MultiplyExpression:
-                    binaryExpressionSyntax.OperationKind = BinaryExpressionKind.MultiplyExpression;
-                    break;
-                case SyntaxKind.DivideExpression:
-                    binaryExpressionSyntax.OperationKind = BinaryExpressionKind.DivideExpression;
-                    break;
-                default:
-                    binaryExpressionSyntax.OperationKind = BinaryExpressionKind.UnhandledBinaryExpression;
-                    break;
-            }
+            binaryExpressionSyntax.OperationKind = CppBinaryExpressionSyntax.BinaryExpressionKindFromSyntaxKind(node.Kind());
 
             base.VisitBinaryExpression(node);
         }
 
         public override void VisitPropertyDeclaration(PropertyDeclarationSyntax node)
         {
-            PropertyConverter propertyConverter = new PropertyConverter();
             var parentClass = FindParentOfType(CppSyntaxKind.ClassDeclaration);
-            propertyConverter.OwnerClass = parentClass as CppClassSyntax;
-            propertyConverter.VisitPropertyDeclaration(node);
+            PropertyConversion propertyConversion = new PropertyConversion(node, parentClass as CppClassSyntax);
 
-            if (propertyConverter.HasGetter)
-                _classNode.AddNode(propertyConverter.GetMethod);
-            if (propertyConverter.HasSetter)
-                _classNode.AddNode(propertyConverter.SetMethod);
+            if (propertyConversion.HasGetter)
+                _classNode.AddNode(propertyConversion.GetMethod);
+            if (propertyConversion.HasSetter)
+                _classNode.AddNode(propertyConversion.SetMethod);
         }
 
         public override void VisitBlock(BlockSyntax node)
@@ -315,7 +297,10 @@ namespace CodeGen
 
         public override void VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
         {
-            StackReplace(new CppSimpleMemberAccessExpressionSyntax());
+            if (node.IsKind(SyntaxKind.SimpleMemberAccessExpression))
+                StackReplace(new CppSimpleMemberAccessExpressionSyntax());
+
+            // SyntaxKind.PointerMemberAccessExpression - unhandled
 
             base.VisitMemberAccessExpression(node);
         }
